@@ -166,6 +166,7 @@ class BinduApplication(Starlette):
             skill_detail_endpoint,
             skill_documentation_endpoint,
             skills_list_endpoint,
+            metrics_endpoint,
         )
 
         # Add health endpoint import
@@ -206,6 +207,9 @@ class BinduApplication(Starlette):
         )
         # Register health endpoint
         self._add_route("/health", health_endpoint, ["GET"], with_app=True)
+
+        # Register metrics endpoint
+        self._add_route("/metrics", metrics_endpoint, ["GET"], with_app=True)
 
         # Negotiation endpoint
         self._add_route(
@@ -568,6 +572,13 @@ class BinduApplication(Starlette):
             auth_middleware = self._create_auth_middleware()
             # Add auth middleware after X402 (if present)
             middleware_list.insert(1 if x402_ext else 0, auth_middleware)
+
+        # Add metrics middleware (should be last to capture all requests)
+        from .middleware import MetricsMiddleware
+
+        metrics_middleware = Middleware(MetricsMiddleware)
+        middleware_list.append(metrics_middleware)
+        logger.info("Metrics middleware enabled for Prometheus monitoring")
 
         return middleware_list
 

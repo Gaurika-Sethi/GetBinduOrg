@@ -23,6 +23,7 @@ from .skills import (
     skill_documentation_endpoint,
     skills_list_endpoint,
 )
+from .metrics import metrics_endpoint
 
 __all__ = [
     # A2A Protocol
@@ -42,4 +43,6 @@ __all__ = [
     "skills_list_endpoint",
     "skill_detail_endpoint",
     "skill_documentation_endpoint",
+    # Metrics
+    "metrics_endpoint",
 ]

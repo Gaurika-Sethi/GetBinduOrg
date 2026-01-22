@@ -1,4 +1,4 @@
-# Bindu Examples 
+# Bindu Examples
 
 Welcome to the Bindu examples collection! This directory contains ready-to-run agents that demonstrate various capabilities of the Bindu framework, from simple echo bots to advanced payment-gated advisors.
 
@@ -69,8 +69,8 @@ curl -X POST http://localhost:3773/ \
      -H "Content-Type: application/json" \
      -d '{
            "jsonrpc": "2.0",
-           "method": "message/send", 
-           "params": {"message": {"role": "user", "content": "Hello!"}}, 
+           "method": "message/send",
+           "params": {"message": {"role": "user", "content": "Hello!"}},
            "id": 1
          }'
 ```
