@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from bindu.utils.token_utils import (
+from bindu.auth.token_utils import (
     get_client_credentials_token,
     get_agent_token_from_credentials_file,
     introspect_token,
@@ -31,7 +31,7 @@ class TestGetClientCredentialsToken:
         )
 
         with patch(
-            "bindu.utils.token_utils.aiohttp.ClientSession"
+            "bindu.auth.token_utils.aiohttp.ClientSession"
         ) as mock_session_class:
             mock_session = MagicMock()
             mock_session.__aenter__ = AsyncMock(return_value=mock_session)
@@ -71,7 +71,7 @@ class TestGetClientCredentialsToken:
         )
 
         with patch(
-            "bindu.utils.token_utils.aiohttp.ClientSession"
+            "bindu.auth.token_utils.aiohttp.ClientSession"
         ) as mock_session_class:
             mock_session = MagicMock()
             mock_session.__aenter__ = AsyncMock(return_value=mock_session)
@@ -99,7 +99,7 @@ class TestGetClientCredentialsToken:
         mock_response.text = AsyncMock(return_value="Unauthorized")
 
         with patch(
-            "bindu.utils.token_utils.aiohttp.ClientSession"
+            "bindu.auth.token_utils.aiohttp.ClientSession"
         ) as mock_session_class:
             mock_session = MagicMock()
             mock_session.__aenter__ = AsyncMock(return_value=mock_session)
@@ -122,7 +122,7 @@ class TestGetClientCredentialsToken:
     async def test_get_token_exception(self):
         """Test handling exception during token request."""
         with patch(
-            "bindu.utils.token_utils.aiohttp.ClientSession"
+            "bindu.auth.token_utils.aiohttp.ClientSession"
         ) as mock_session_class:
             mock_session_class.side_effect = Exception("Connection error")
 
@@ -145,11 +145,11 @@ class TestGetAgentTokenFromCredentialsFile:
         mock_credentials.scopes = ["agent:read", "agent:write"]
 
         with patch(
-            "bindu.utils.token_utils.load_agent_credentials",
+            "bindu.auth.token_utils.load_agent_credentials",
             return_value=mock_credentials,
         ):
             with patch(
-                "bindu.utils.token_utils.get_client_credentials_token",
+                "bindu.auth.token_utils.get_client_credentials_token",
                 new=AsyncMock(
                     return_value={
                         "access_token": "agent_token",  # pragma: allowlist secret
@@ -182,11 +182,11 @@ class TestGetAgentTokenFromCredentialsFile:
         mock_credentials.scopes = ["agent:read"]
 
         with patch(
-            "bindu.utils.token_utils.load_agent_credentials",
+            "bindu.auth.token_utils.load_agent_credentials",
             return_value=mock_credentials,
         ):
             with patch(
-                "bindu.utils.token_utils.get_client_credentials_token",
+                "bindu.auth.token_utils.get_client_credentials_token",
                 new=AsyncMock(return_value=None),
             ):
                 token = await get_agent_token_from_credentials_file(
@@ -275,7 +275,7 @@ class TestValidateTokenAndGetSubject:
     async def test_validate_active_token(self):
         """Test validating an active token."""
         with patch(
-            "bindu.utils.token_utils.introspect_token",
+            "bindu.auth.token_utils.introspect_token",
             new=AsyncMock(return_value={"active": True, "sub": "user-123"}),
         ):
             subject = await validate_token_and_get_subject(
@@ -288,7 +288,7 @@ class TestValidateTokenAndGetSubject:
     async def test_validate_inactive_token(self):
         """Test validating an inactive token."""
         with patch(
-            "bindu.utils.token_utils.introspect_token",
+            "bindu.auth.token_utils.introspect_token",
             new=AsyncMock(return_value={"active": False}),
         ):
             subject = await validate_token_and_get_subject(
@@ -301,7 +301,7 @@ class TestValidateTokenAndGetSubject:
     async def test_validate_token_introspection_fails(self):
         """Test when introspection fails."""
         with patch(
-            "bindu.utils.token_utils.introspect_token",
+            "bindu.auth.token_utils.introspect_token",
             new=AsyncMock(return_value=None),
         ):
             subject = await validate_token_and_get_subject(

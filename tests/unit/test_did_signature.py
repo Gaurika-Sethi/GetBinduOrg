@@ -233,27 +233,6 @@ class TestValidateTimestamp:
         assert result is True
 
 
-class TestCreateSignedRequestHeaders:
-    """Test creating complete signed request headers."""
-
-    def test_create_signed_request_headers(self):
-        """Test creating headers with token and signature."""
-        body = {"test": "data"}
-        did = "did:key:test"
-        bearer_token = "ory_at_token123"
-
-        mock_did_ext = MagicMock()
-        mock_did_ext.sign_message.return_value = "signature123"
-
-        headers = create_signed_request_headers(body, did, mock_did_ext, bearer_token)
-
-        assert headers["Authorization"] == "Bearer ory_at_token123"
-        assert headers["Content-Type"] == "application/json"
-        assert headers["X-DID"] == did
-        assert headers["X-DID-Signature"] == "signature123"
-        assert "X-DID-Timestamp" in headers
-
-
 @pytest.mark.asyncio
 class TestGetPublicKeyFromHydra:
     """Test getting public key from Hydra metadata."""
@@ -342,7 +321,6 @@ class TestCreateSignedRequestHeaders:
 
     def test_create_signed_request_headers(self):
         """Test creating complete signed request headers."""
-        from bindu.utils.did_signature import create_signed_request_headers
 
         mock_did_ext = MagicMock()
         mock_did_ext.sign_message.return_value = "test_signature"
