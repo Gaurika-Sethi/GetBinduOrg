@@ -209,11 +209,8 @@ export async function* sendAgentMessage(
 			if (taskState === 'completed' || taskState === 'input-required') {
 				const text = extractTextFromTask(currentTask);
 				
-				if (text) {
-					// Yield text as stream tokens
-					yield { type: MessageUpdateType.Stream, token: text };
-				}
-				
+				// Yield final answer directly (no stream tokens needed)
+				// The FinalAnswer will set message.content which the UI will render
 				yield { 
 					type: MessageUpdateType.FinalAnswer, 
 					text: text || '', 
