@@ -4,6 +4,37 @@ Capability-based agent selection for intelligent orchestration. Bindu's negotiat
 
 ## How It Works
 
+```mermaid
+sequenceDiagram
+    participant Orchestrator
+    participant Agent1
+    participant Agent2
+    participant Agent3
+
+    Note over Orchestrator: 1. Broadcast Request
+    Orchestrator->>Agent1: POST /agent/negotiation<br/>{task_summary, constraints}
+    Orchestrator->>Agent2: POST /agent/negotiation
+    Orchestrator->>Agent3: POST /agent/negotiation
+
+    Note over Agent1,Agent3: 2. Self-Assessment
+    Agent1->>Agent1: Check hard constraints<br/>(IO types, tools)
+    Agent1->>Agent1: Calculate skill match<br/>(keywords + embeddings)
+    Agent1->>Agent1: Score: IO, load, cost
+    Agent1->>Agent1: Weighted final score
+
+    Agent2->>Agent2: Same assessment process
+    Agent3->>Agent3: Same assessment process
+
+    Note over Agent1,Agent3: 3. Return Scores
+    Agent1-->>Orchestrator: {accepted: true, score: 0.89}
+    Agent2-->>Orchestrator: {accepted: true, score: 0.72}
+    Agent3-->>Orchestrator: {accepted: false, reason}
+
+    Note over Orchestrator: 4. Select Best Agent
+    Orchestrator->>Orchestrator: Rank by score
+    Orchestrator->>Agent1: Send task (highest score)
+```
+
 ### 1. Orchestrator Broadcasts
 
 Orchestrator sends assessment request to multiple agents:
